@@ -37,7 +37,7 @@ while(count <= 10):
 	json.dumps(
 		{"state" : 
 			{"desired" : 
-				{"A360" : 
+				{"AP700" : 
 					{"intensity" : initialValue,
 					 "color" : initialValue}}}}
 	), 1)

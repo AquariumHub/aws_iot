@@ -11,9 +11,9 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
-rootCAPath = "./AWS/root-CA.crt"
-certificatePath = "./AWS/AquariumHub.cert.pem"
-privateKeyPath = "./AWS/AquariumHub.private.key"
+rootCAPath = "../AWS/root-CA.crt"
+certificatePath = "../AWS/AquariumHub.cert.pem"
+privateKeyPath = "../AWS/AquariumHub.private.key"
 MY_TOPIC = "sensingData"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("subscribe")
@@ -37,6 +37,12 @@ def customCallback(client, userdata, message):
   print("from topic: ")
   print(message.topic)
   print("--------------\n\n")
+  
+  data = json.loads(message.payload)
+  Press = data['temperature']
+  print('temperature: ')
+  print Press
+  
 
 while True:
   myAWSIoTMQTTClient.subscribe(MY_TOPIC, 0, customCallback)
