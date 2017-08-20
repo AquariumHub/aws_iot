@@ -11,9 +11,9 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
-rootCAPath = "../AWS/root-CA.crt"
-certificatePath = "../AWS/AquariumHub.cert.pem"
-privateKeyPath = "../AWS/AquariumHub.private.key"
+rootCAPath = "./root-CA.crt"
+certificatePath = "./7de6077801-certificate.pem.crt"
+privateKeyPath = "./7de6077801-private.pem.key"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("publish")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)
