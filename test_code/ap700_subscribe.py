@@ -23,7 +23,6 @@ host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
 rootCAPath = "./root-CA.crt"
 certificatePath = "./7de6077801-certificate.pem.crt"
 privateKeyPath = "./7de6077801-private.pem.key"
-MY_TOPIC = "$aws/things/AquariumHub/shadow/update"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("subscribe")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)
@@ -139,24 +138,56 @@ def cmd_ap700(intensity_ap700, color_ap700):
 
 # Custom MQTT message callback
 def customCallback(client, userdata, message):
-  print("Received a new message: ")
-  print(message.payload)
-  print("from topic: ")
-  print(message.topic)
-  print("--------------\n\n")
+    print("Received a new message: ")
+    print(message.payload)
+    print("from topic: ")
+    print(message.topic)
+    print("--------------\n\n")
   
-  data = json.loads(message.payload)
-  intensity_ap700 = data['state']['desired']['AP700']['intensity']
-  print('intensity: ')
-  print intensity_ap700
-  color_ap700 = data['state']['desired']['AP700']['color']
-  print('color: ')
-  print color_ap700
-  
-  cmd_ap700(intensity_ap700, color_ap700)
+    # subscribe shadow topic and take actions for commands of ap700
+    data = json.loads(message.payload)
+    intensity_ap700 = data['state']['desired']['AP700']['intensity']
+    print('cmd_ap700_intensity: ')
+    print intensity_ap700
+    color_ap700 = data['state']['desired']['AP700']['color']
+    print('cmd_ap700_color: ')
+    print color_ap700
+    cmd_ap700(intensity_ap700, color_ap700)
+    
+    # subscribe shadow topic and take actions for commands of a360
+    # data = json.loads(message.payload)
+    intensity_a360 = data['state']['desired']['A360']['intensity']
+    print('intensity: ')
+    print intensity_a360
+    color_a360 = data['state']['desired']['A360']['color']
+    print('color: ')
+    print color_a360
+    
+    myport = serial.Serial("/dev/ttyS0", 57600, timeout= 0.5 )
+    jsonObject = json.dumps({"cmd":CMD_A360, "intensity":intensity_a360, "color":color_a360})
+    myport.write(jsonObject)
+    myport.close()
+    
+sys.path.insert(0, '/usr/lib/python2.7/bridge/')
+from bridgeclient import BridgeClient as bridgeclient
+value = bridgeclient()
+
+TOPIC_SHADOW_UPDATE = "$aws/things/AquariumHub/shadow/update"
+TOPIC_SENSING_DATA
 
 while True:
-  ip_ap700 = []
-  myAWSIoTMQTTClient.subscribe(MY_TOPIC, 0, customCallback)
+    # subscribe to shadow update
+    ip_ap700 = []
+    myAWSIoTMQTTClient.subscribe(TOPIC_SHADOW_UPDATE, 0, customCallback)
+    
+    brightness = value.get("Brightness")
+    temperature = value.get("Temperature")
+    print "Bright: " + brightness
+    print "Temp: " + temperature
+    
+    timeObject = time.time();
+    date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
+    print "brightness: %d, temperature: %d" % (float(brightness), float(temperature))
+    myAWSIoTMQTTClient.publish("sensingData", json.dumps({"time": date, "temperature": temperature, "brightness": brightness}), 1)
 
-time.sleep(2)
+myAWSIoTMQTTClient.disconnect()

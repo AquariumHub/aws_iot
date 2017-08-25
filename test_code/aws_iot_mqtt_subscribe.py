@@ -11,11 +11,12 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
-rootCAPath = "./AWS/root-CA.crt"
-certificatePath = "./AWS/AquariumHub.cert.pem"
-privateKeyPath = "./AWS/AquariumHub.private.key"
+rootCAPath = "./root-CA.crt"
+certificatePath = "./7de6077801-certificate.pem.crt"
+privateKeyPath = "./7de6077801-private.pem.key"
+MY_TOPIC = "sensingData"
 
-myAWSIoTMQTTClient = AWSIoTMQTTClient("publish")
+myAWSIoTMQTTClient = AWSIoTMQTTClient("subscribe")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)
 myAWSIoTMQTTClient.configureCredentials(rootCAPath, privateKeyPath, certificatePath)
 
@@ -27,22 +28,25 @@ myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
 # Connect and subscribe to AWS IoT
+print("connecting")
 myAWSIoTMQTTClient.connect()
+print("connected")
 
-sys.path.insert(0, '/usr/lib/python2.7/bridge/')
-from bridgeclient import BridgeClient as bridgeclient
-value = bridgeclient()
+# Custom MQTT message callback
+def customCallback(client, userdata, message):
+  print("Received a new message: ")
+  print(message.payload)
+  print("from topic: ")
+  print(message.topic)
+  print("--------------\n\n")
+  
+  data = json.loads(message.payload)
+  Press = data['temperature']
+  print('temperature: ')
+  print Press
+  
 
-# Publish to the same topic in a loop forever
 while True:
-    brightness = value.get("Brightness")
-    temperature = value.get("Temperature")
-    print "Bright: " + brightness
-    print "Temp: " + temperature
+  myAWSIoTMQTTClient.subscribe(MY_TOPIC, 0, customCallback)
 
-    t = time.time();
-    date = datetime.datetime.fromtimestamp(t).strftime('%Y%m%d%H%M%S')
-    print "brightness: %d, temperature: %d" % (float(brightness), float(temperature))
-    myAWSIoTMQTTClient.publish("sensingData", json.dumps({"time": date, "temperature": temperature, "brightness": brightness}), 1)
-
-    time.sleep(1)
+time.sleep(2)

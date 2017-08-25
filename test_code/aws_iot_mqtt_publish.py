@@ -11,9 +11,10 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
-rootCAPath = "../AWS/root-CA.crt"
-certificatePath = "../AWS/AquariumHub.cert.pem"
-privateKeyPath = "../AWS/AquariumHub.private.key"
+rootCAPath = "./root-CA.crt"
+certificatePath = "./7de6077801-certificate.pem.crt"
+privateKeyPath = "./7de6077801-private.pem.key"
+MY_TOPIC = "sensingData"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("publish")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)
@@ -26,23 +27,25 @@ myAWSIoTMQTTClient.configureDrainingFrequency(2)  # Draining: 2 Hz
 myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
-# Connect and subscribe to AWS IoT
+# Connect and publish to AWS IoT
+print("connecting")
 myAWSIoTMQTTClient.connect()
+print("connected")
 
-count = 1
-initialValue = 0
-while(count <= 10):
-	print("count: " + str(count))
-	myAWSIoTMQTTClient.publish("$aws/things/AquariumHub/shadow/update", 
-	json.dumps(
-		{"state" : 
-			{"desired" : 
-				{"A360" : 
-					{"intensity" : initialValue,
-					 "color" : initialValue}}}}
-	), 1)
-	initialValue  = initialValue + 10
-	count = count + 1
-	time.sleep(3)
-	
-myAWSIoTMQTTClient.disconnect()
+sys.path.insert(0, '/usr/lib/python2.7/bridge/')
+from bridgeclient import BridgeClient as bridgeclient
+value = bridgeclient()
+
+# Publish to the same topic in a loop forever
+while True:
+    brightness = value.get("Brightness")
+    temperature = value.get("Temperature")
+    print "Bright: " + brightness
+    print "Temp: " + temperature
+    time.sleep(1)
+
+    timeObject = time.time();
+    date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
+    print "brightness: %d, temperature: %d" % (float(brightness), float(temperature))
+    myAWSIoTMQTTClient.publish("sensingData", json.dumps({"time": date, "temperature": temperature, "brightness": brightness}), 1)
+
