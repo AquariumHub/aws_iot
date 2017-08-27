@@ -6,17 +6,15 @@ import getopt
 import json
 import datetime
 import AWSIoTPythonSDK
-import serial
-import subprocess
 sys.path.insert(0, os.path.dirname(AWSIoTPythonSDK.__file__))
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
-rootCAPath = "../AWS/root-CA.crt"
-certificatePath = "../AWS/AquariumHub.cert.pem"
-privateKeyPath = "../AWS/AquariumHub.private.key"
-MY_TOPIC = "$aws/things/AquariumHub/shadow/update"
+rootCAPath = "./root-CA.crt"
+certificatePath = "./7de6077801-certificate.pem.crt"
+privateKeyPath = "./7de6077801-private.pem.key"
+MY_TOPIC = "sensingData"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("subscribe")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)
@@ -30,9 +28,9 @@ myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
 # Connect and subscribe to AWS IoT
+print("connecting")
 myAWSIoTMQTTClient.connect()
-
-CMD_A360 = 1;
+print("connected")
 
 # Custom MQTT message callback
 def customCallback(client, userdata, message):
@@ -43,20 +41,14 @@ def customCallback(client, userdata, message):
   print("--------------\n\n")
   
   data = json.loads(message.payload)
-  intensity_ap700 = data['state']['desired']['AP700']['intensity']
-  print('intensity: ')
-  print intensity_ap700
-  color_ap700 = data['state']['desired']['AP700']['color']
-  print('color: ')
-  print color_ap700
+  Press = data['temperature']
+  print('temperature: ')
+  print Press
   
-def cmd_ap700(intensity_ap700, color_ap700):
-  p = subprocess.Popen('ls', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  for line in p.stdout.readlines():
-    print line,
-  retval = p.wait()
-  
-while True:
-  myAWSIoTMQTTClient.subscribe(MY_TOPIC, 0, customCallback)
 
+count = 0
+while True:
+  print count
+  myAWSIoTMQTTClient.subscribe(MY_TOPIC, 0, customCallback)
+  count = count + 1
 time.sleep(2)
