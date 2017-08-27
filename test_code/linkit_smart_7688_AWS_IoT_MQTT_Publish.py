@@ -7,10 +7,10 @@ import json
 import datetime
 
 # Read in command-line parameters
-host = ""
+host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
 rootCAPath = "./root-CA.crt"
-certificatePath = "./.cert.pem"
-privateKeyPath = "./.private.key"
+certificatePath = "./7de6077801-certificate.pem.crt"
+privateKeyPath = "./7de6077801-private.pem.key"
 
 myAWSIoTMQTTClient = AWSIoTMQTTClient("publish")
 myAWSIoTMQTTClient.configureEndpoint(host, 8883)

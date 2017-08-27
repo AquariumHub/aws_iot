@@ -103,7 +103,11 @@ def cmd_ap700(intensity_ap700, color_ap700):
 
     
     if(intensity_ap700 == 0):
+<<<<<<< HEAD
         data = [01,00,01,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,00,00,00,00,00,0]
+=======
+        data = bytearray([01,00,01,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,00,00,00,00,00,0])
+>>>>>>> a018ce4e65576b77e6b74bd06b1fe7044f64de4c
     
     #generate command for ap700 to set light intensity and color
     ap700cmd = genCmd(data)

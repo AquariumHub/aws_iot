@@ -155,8 +155,13 @@ def customCallback(client, userdata, message):
         print('cmd_ap700_color: ')
         print color_ap700
         cmd_ap700(intensity_ap700, color_ap700)
+<<<<<<< HEAD
     except Exception as e:
         print("Something wrong while execute commands of ap700. Exception is %s" % (e))
+=======
+    except:
+        print("no command for AP700")
+>>>>>>> a018ce4e65576b77e6b74bd06b1fe7044f64de4c
     
     # subscribe shadow topic and take actions for commands of a360
     # data = json.loads(message.payload)

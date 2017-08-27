@@ -44,8 +44,8 @@ while True:
     print "Temp: " + temperature
     time.sleep(1)
 
-    t = time.time();
-    date = datetime.datetime.fromtimestamp(t).strftime('%Y%m%d%H%M%S')
+    timeObject = time.time();
+    date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
     print "brightness: %d, temperature: %d" % (float(brightness), float(temperature))
     myAWSIoTMQTTClient.publish("sensingData", json.dumps({"time": date, "temperature": temperature, "brightness": brightness}), 1)
 
