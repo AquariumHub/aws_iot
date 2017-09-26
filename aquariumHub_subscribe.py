@@ -149,10 +149,10 @@ def customCallback(client, userdata, message):
     try:
         data = json.loads(message.payload)
         intensity_ap700 = data['current']['state']['desired']['AP700']['intensity']
-        print('cmd_ap700_intensity: ')
+        print('ap700_intensity: ')
         print intensity_ap700
         color_ap700 = data['current']['state']['desired']['AP700']['color']
-        print('cmd_ap700_color: ')
+        print('ap700_color: ')
         print color_ap700
         cmd_ap700(intensity_ap700, color_ap700)
     except Exception as e:
@@ -162,10 +162,10 @@ def customCallback(client, userdata, message):
     # data = json.loads(message.payload)
     try:
         intensity_a360 = data['current']['state']['desired']['A360']['intensity']
-        print('intensity: ')
+        print('a360_intensity: ')
         print intensity_a360
         color_a360 = data['current']['state']['desired']['A360']['color']
-        print('color: ')
+        print('a360_color: ')
         print color_a360
     
         myport = serial.Serial("/dev/ttyS0", 57600, timeout= 0.5 )
