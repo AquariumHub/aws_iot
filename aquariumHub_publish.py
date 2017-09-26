@@ -39,6 +39,7 @@ def lineNo():
 """
 
 # import bridgeclient
+# if you want to use bridge instead
 # please enable Bridge library on LinkIt Smart 7688 Duo 
 '''
 uci set yunbridge.config.disabled='0'
@@ -63,7 +64,7 @@ while True:
         lightFrequency = data['LightFrequency']
         #pH = data['pH']
     except:
-        print "somwthing wrong while getting value via bridge"
+        print "something wrong while getting value via bridge"
     timeObject = time.time();
     date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
     print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
