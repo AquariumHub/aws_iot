@@ -1,4 +1,5 @@
 import os
+import serial
 import sys
 import time
 import json
@@ -43,27 +44,32 @@ def lineNo():
 uci set yunbridge.config.disabled='0'
 uci commit
 reboot
-'''
+
 sys.path.insert(0, '/usr/lib/python2.7/bridge/')
 from bridgeclient import BridgeClient as bridgeclient
 value = bridgeclient()
+'''
 
 TOPIC_SENSING_DATA = "sensingData"
 
+ser = serial.Serial("/dev/ttyS0", 57600)
+data = json.loads(ser.readline())
+
 while True:
     try:
-        brightness = value.get("Brightness")
-        temperature = value.get("Temperature")
-        lightFrequency = value.get("LightFrequency")
-        #pH = value.get = value.get("pH")
+	data = json.loads(ser.readline())
+        brightness = data['Brightness']
+        temperature = data['Temperature']
+        lightFrequency = data['LightFrequency']
+        #pH = data['pH']
     except:
         print "somwthing wrong while getting value via bridge"
     timeObject = time.time();
     date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
     print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
-    print "Brightness: " + brightness
-    print "Temperature: " + temperature
-    print "Light Frequency: " + lightFrequency + "\n"
+    print "Brightness: " + str(brightness)
+    print "Temperature: " + str(temperature)
+    print "Light Frequency: " + str(lightFrequency) + "\n"
     #print "pH: " + pH
     print "------------------------------------"
     time.sleep(2)
