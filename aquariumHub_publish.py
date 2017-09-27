@@ -54,11 +54,10 @@ value = bridgeclient()
 TOPIC_SENSING_DATA = "sensingData"
 
 ser = serial.Serial("/dev/ttyS0", 57600)
-data = json.loads(ser.readline())
 
 while True:
     try:
-	data = json.loads(ser.readline())
+        data = json.loads(ser.readline())
         brightness = data['Brightness']
         temperature = data['Temperature']
         lightFrequency = data['LightFrequency']
