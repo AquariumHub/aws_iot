@@ -63,7 +63,7 @@ while True:
         lightFrequency = data['LightFrequency']
         #pH = data['pH']
     except:
-        print "something wrong while getting value via bridge"
+        print "something wrong while getting value via serial port"
     timeObject = time.time();
     date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
     print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
