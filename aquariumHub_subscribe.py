@@ -1,8 +1,5 @@
 import os
-import sys
-import logging
 import time
-import getopt
 import json
 import datetime
 import AWSIoTPythonSDK

@@ -8,7 +8,6 @@ import AWSIoTPythonSDK
 sys.path.insert(0, os.path.dirname(AWSIoTPythonSDK.__file__))
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import socket
-from pprint import pprint
 from exception_handler import GracefulKiller
 
 # Read in command-line parameters
