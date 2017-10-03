@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(AWSIoTPythonSDK.__file__))
 from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
 import socket
 from pprint import pprint
+from exception_handler import GracefulKiller
 
 # Read in command-line parameters
 host = "a2bdrinkbnov3t.iot.ap-northeast-1.amazonaws.com"
@@ -55,27 +56,28 @@ TOPIC_SENSING_DATA = "sensingData"
 
 ser = serial.Serial("/dev/ttyS0", 57600)
 
+killer = GracefulKiller()
 while True:
-    try:
-        data = json.loads(ser.readline())
-        brightness = data['Brightness']
-        temperature = data['Temperature']
-        lightFrequency = data['LightFrequency']
-        #pH = data['pH']
-    except:
-        print "something wrong while getting value via serial port"
-    timeObject = time.time();
-    date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
-    print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
-    print "Brightness: " + str(brightness)
-    print "Temperature: " + str(temperature)
-    print "Light Frequency: " + str(lightFrequency) + "\n"
-    #print "pH: " + pH
-    print "------------------------------------"
-    time.sleep(2)
-    
-    #print "brightness: %d, temperature: %d, lightFrequency: %d, pH: %d" % (float(brightness), float(temperature), float(lightFrequency), float(pH))
-    myAWSIoTMQTTClient.publish(TOPIC_SENSING_DATA, json.dumps({"time": date, "temperature": temperature, "brightness": brightness, "lightFrequency": lightFrequency}), 1)
-
-    
+  if killer.kill_now:
+    break
+  try:
+    data = json.loads(ser.readline())
+    brightness = data['Brightness']
+    temperature = data['Temperature']
+    lightFrequency = data['LightFrequency']
+    #pH = data['pH']
+  except Exception as e:
+    print "Errors occurred while getting sensing data from serial port. "
+    print "The exception is " + str(e)
+  timeObject = time.time();
+  date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
+  print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
+  print "Brightness: " + str(brightness)
+  print "Temperature: " + str(temperature)
+  print "Light Frequency: " + str(lightFrequency) + "\n"
+  #print "pH: " + pH
+  print "------------------------------------"
+  myAWSIoTMQTTClient.publish(TOPIC_SENSING_DATA, json.dumps({"time": date, "temperature": temperature, "brightness": brightness, "lightFrequency": lightFrequency}), 1)
+  time.sleep(2)
+print "Stopped"
 myAWSIoTMQTTClient.disconnect()

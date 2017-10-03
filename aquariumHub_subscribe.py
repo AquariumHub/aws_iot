@@ -13,6 +13,7 @@ import inspect
 import re
 import socket
 from pprint import pprint
+from exception_handler import GracefulKiller
 
 CMD_A360 = 1;
 PORT_AP700 = 8899 # port of ap700
@@ -175,10 +176,14 @@ def customCallback(client, userdata, message):
     
 TOPIC_SHADOW = "$aws/things/AquariumHub/shadow/update/documents"
 
+killer = GracefulKiller()
 while True:
+  if killer.kill_now:
+    break
   # subscribe to shadow update
   ip_ap700 = []
   myAWSIoTMQTTClient.subscribe(TOPIC_SHADOW, 0, customCallback)
   time.sleep(0.2)
     
+print "Stopped"
 myAWSIoTMQTTClient.disconnect()
