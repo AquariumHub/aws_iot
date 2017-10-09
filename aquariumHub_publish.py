@@ -68,6 +68,7 @@ while True:
   except Exception as e:
     print "Errors occurred while getting sensing data from serial port. "
     print "The exception is " + str(e)
+    pass
   timeObject = time.time();
   date = datetime.datetime.fromtimestamp(timeObject).strftime('%Y%m%d%H%M%S')
   print "\ndate: " + datetime.datetime.fromtimestamp(timeObject).strftime('%Y/%m/%d %H:%M:%S')
