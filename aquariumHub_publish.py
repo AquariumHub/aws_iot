@@ -78,7 +78,7 @@ while True:
   #print "pH: " + pH
   print "------------------------------------"
   try:
-  myAWSIoTMQTTClient.publish(TOPIC_SENSING_DATA, json.dumps({"time": date, "temperature": temperature, "brightness": brightness, "lightFrequency": lightFrequency}), 1)
+    myAWSIoTMQTTClient.publish(TOPIC_SENSING_DATA, json.dumps({"time": date, "temperature": temperature, "brightness": brightness, "lightFrequency": lightFrequency}), 1)
   except Exception as e:
     print str(e)
     pass
