@@ -182,7 +182,7 @@ while True:
   ip_ap700 = []
   try:
     myAWSIoTMQTTClient.subscribe(TOPIC_SHADOW, 0, customCallback)
-  exception Exception as e:
+  except Exception as e:
     print(e)
     pass
   time.sleep(0.2)
